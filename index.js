@@ -1,9 +1,31 @@
 /**
  * Module dependencies.
+
+ AppKey/AppSecrets for application 'oixtestapp (565)':
+AppKey1: ad0737c5bd1a46618a68351d5ba6c2ac
+Secret: 8534053a39894b2099cab1ff31c0d6c0 (Valid from 12/02/2019 00:00:00 to 12/02/2019 23:59:59)
+
  */
+
 
 var express = require('express');
 var path = require('path');
+const OAuth2Strategy = require('passport-oauth2');
+const passport = require('passport');
+
+passport.use(new OAuth2Strategy({
+  authorizationURL: 'https://idp.blue.sso.sys.dom/authorize',
+  tokenURL: 'https://idp.blue.sso.sys.dom/token',
+  clientID: "d28482920be44bdd890a99abea2cd412",
+  clientSecret: "cc5c2eb7a02e466e9f11aafd11d4b8f5",
+  callbackURL: "/signin-saxobank/internal/"
+},
+function(accessToken, refreshToken, profile, cb) {
+  User.findOrCreate({ exampleId: profile.id }, function (err, user) {
+    return cb(err, user);
+  });
+}
+));
 
 var app = module.exports = express();
 
@@ -48,8 +70,11 @@ app.get('/', function(req, res){
   });
 });
 
+app.get('/auth/example',
+  passport.authenticate('oauth2'));
+
 /* istanbul ignore next */
 if (!module.parent) {
-  app.listen(3000);
-  console.log('Express started on port 3000');
+  app.listen(10086);
+  console.log('Express started on port 10086');
 }
