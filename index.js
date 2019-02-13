@@ -5,9 +5,6 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var api = require('./api')
 
-const providerName = 'oauth2Provider'
-var passport = require('./passport')(providerName, api);
-
 var app = express();
 app.engine('.html', require('ejs').__express);
 app.set('views', path.join(__dirname, 'views'));
@@ -19,11 +16,11 @@ app.use(session({
     saveUninitialized: false
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+var oauthMiddleware = require('./passport')(app, api);
 
-app.get('/auth/provider', passport.authenticate(providerName));
-app.get('/signin-saxobank/internal', passport.authenticate(providerName, {
+
+app.get('/auth/login', oauthMiddleware());
+app.get('/signin-saxobank/internal', oauthMiddleware({
     successRedirect: '/',
     failureRedirect: '/failure'
 }));
@@ -39,7 +36,7 @@ app.get('/', (req, res) => {
             });
         })
     } else {
-        res.redirect('/auth/provider')
+        res.redirect('/auth/login')
     }
 });
 

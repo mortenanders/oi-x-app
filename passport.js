@@ -1,6 +1,8 @@
 const OAuth2Strategy = require('passport-oauth2');
 const passport = require('passport');
-module.exports = (providerName, api) => {    
+const providerName = "oauth2";
+
+module.exports = (app, api) => {    
     passport.serializeUser((user, done) => done(null, user));
     passport.deserializeUser((user, done) => done(null, user));
 
@@ -22,5 +24,8 @@ module.exports = (providerName, api) => {
             })
         }
     ));
-    return passport;
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+    return (opts) => passport.authenticate(providerName, opts);
 }
