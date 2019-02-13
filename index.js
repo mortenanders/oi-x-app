@@ -4,7 +4,9 @@ const request = require('request')
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var api = require('./api')
-var passport = require('./passport')(api);
+
+const providerName = 'oauth2Provider'
+var passport = require('./passport')(providerName, api);
 
 var app = express();
 app.engine('.html', require('ejs').__express);
@@ -20,8 +22,8 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/auth/provider', passport.authenticate('oauth2Provider'));
-app.get('/signin-saxobank/internal', passport.authenticate('oauth2Provider', {
+app.get('/auth/provider', passport.authenticate(providerName));
+app.get('/signin-saxobank/internal', passport.authenticate(providerName, {
     successRedirect: '/',
     failureRedirect: '/failure'
 }));

@@ -1,10 +1,10 @@
 const OAuth2Strategy = require('passport-oauth2');
 const passport = require('passport');
-module.exports = (api) => {    
+module.exports = (providerName, api) => {    
     passport.serializeUser((user, done) => done(null, user));
     passport.deserializeUser((user, done) => done(null, user));
 
-    passport.use('oauth2Provider', new OAuth2Strategy({
+    passport.use(providerName, new OAuth2Strategy({
             authorizationURL: 'https://idp.blue.sso.sys.dom/authorize',
             tokenURL: 'https://idp.blue.sso.sys.dom/token',
             clientID: "d28482920be44bdd890a99abea2cd412",
