@@ -16,11 +16,10 @@ module.exports = (app, api) => {
         (accessToken, refreshToken, profile, cb) => {
             api.getUser(accessToken, (err, user) => {
                 if (err) return cb(err);
-                var user = {
+                cb(null, {
                     name: user.Name,
                     accessToken: accessToken
-                }
-                cb(null, user);
+                });
             })
         }
     ));
