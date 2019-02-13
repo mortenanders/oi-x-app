@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const OAuth2Strategy = require('passport-oauth2');
 const passport = require('passport');
+const request = require('request')
 
 
 passport.serializeUser(function(user, done) {
@@ -40,18 +41,10 @@ var session = require('express-session');
 
 app.use(cookieParser());
 app.use(session({
-  secret: 'keyboard cat',
+  secret: 'someEncryptionKey',
   resave: false,
   saveUninitialized: false
 }));
-
-
-// Dummy users
-var users = [
-  { name: 'tobi', email: 'tobi@learnboost.com' },
-  { name: 'loki', email: 'loki@learnboost.com' },
-  { name: 'jane', email: 'jane@learnboost.com' }
-];
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -64,11 +57,21 @@ app.get('/signin-saxobank/internal',
 
 app.get('/', function(req, res){
   if(req.isAuthenticated()) {
-    res.render('users.html', {
-      users: users,
-      title: "EJS example",
-      header: "Some users"
-    });
+    request({
+      url: "https://blue.openapi.sys.dom/openapi/ref/v1/instruments/?$top=10&AssetTypes=Stock",
+      headers:{
+        authorization: "bearer " + req.user.accessToken
+      },
+      json: true
+    }, (err, response, body) => {
+      console.log(JSON.stringify(body, null, 2));
+      res.render('users.html', {
+        users: body.Data,
+        title: "EJS example",
+        header: "Some users"
+      });
+    })
+    
   } else {
     res.redirect('/auth/provider')
   }
