@@ -1,6 +1,5 @@
 const express = require('express');
 const path = require('path');
-const request = require('request')
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var api = require('./api')
@@ -39,6 +38,7 @@ app.get('/', (req, res) => {
         res.redirect('/auth/login')
     }
 });
+
 
 app.listen(10086);
 console.log('Express started on port 10086');
