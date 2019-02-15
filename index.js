@@ -17,7 +17,6 @@ app.use(session({
 
 var oauthMiddleware = require('./passport')(app, api);
 
-
 app.get('/auth/login', oauthMiddleware());
 app.get('/signin-saxobank/internal', oauthMiddleware({
     successRedirect: '/',
@@ -30,15 +29,14 @@ app.get('/', (req, res) => {
             res.render('users.html', {
                 user: req.user,
                 users: instruments,
-                title: "Stocks",
-                header: "Some users"
+                title: 'Stocks',
+                header: 'Some users'
             });
         })
     } else {
         res.redirect('/auth/login')
     }
 });
-
 
 app.listen(10086);
 console.log('Express started on port 10086');
